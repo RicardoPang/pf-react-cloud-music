@@ -19,7 +19,7 @@ const Loading = styled.div`
     font-size: 10px;
     >div{
       display: inline-block;
-      background-color: ${style["theme-color"]};
+      background-color: ${props => props.theme.secondary};
       height: 100%;
       width: 1px;
       margin-right:2px;
@@ -38,6 +38,11 @@ const Loading = styled.div`
       animation-delay: -0.2s;
     } 
 
+    > span {
+      display: inline-block;
+      margin-left: 5px;
+      color: ${props => props.theme.secondary};
+    }
 `
 
 function LoadingV2() {

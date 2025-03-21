@@ -22,6 +22,12 @@ export default [
       {
         path: '/singers',
         component: Singers,
+        routes: [
+          {
+            path: '/singers/:id',
+            component: Recommend, // 暂时用 Recommend 组件代替 Singer 组件
+          },
+        ],
       },
       {
         path: '/rank',

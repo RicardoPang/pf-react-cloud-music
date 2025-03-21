@@ -1,3 +1,5 @@
+import { RankTypes } from './config';
+
 //src/api/utils.js
 export const getCount = (count) => {
   if (count < 0) return;
@@ -21,4 +23,22 @@ export const debounce = (func, delay) => {
       func.apply(this, args);
     }, delay);
   };
+};
+
+// 处理数据 找出第一个没有革命的排行榜索引
+export const filterIndex = (rankList) => {
+  for (let i = 0; i < rankList.length - 1; i++) {
+    if (rankList[i].tracks.length && !rankList[i + 1].tracks.length) {
+      return i + 1;
+    }
+  }
+  return null;
+};
+
+// 找出排行榜的编号
+export const filterIdx = (name) => {
+  for (var key in RankTypes) {
+    if (RankTypes[key] === name) return key;
+  }
+  return null;
 };
