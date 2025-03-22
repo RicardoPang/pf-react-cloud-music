@@ -2,13 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import Horizen from '../../baseUI/horizen-item';
 import { categoryTypes, alphaTypes } from '../../api/config';
 import { CategoryDataContext } from './data';
-import {
-  NavContainer,
-  ListContainer,
-  List,
-  ListItem,
-  EnterLoading,
-} from './style';
+import { NavContainer, ListContainer, List, ListItem } from './style';
 import {
   getSingerList,
   getHotSingerList,
@@ -25,7 +19,7 @@ import { connect } from 'react-redux';
 import Loading from '../../baseUI/loading';
 import { CHANGE_CATEGORY, CHANGE_ALPHA, Data } from './data';
 import { withRouter } from 'react-router-dom';
-import LoadingV2 from '../../baseUI/loading-v2';
+import { renderRoutes } from 'react-router-config';
 
 const DEFAULT_AVATAR =
   'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48Y2lyY2xlIGZpbGw9IiNFRUUiIGN4PSI1MCIgY3k9IjUwIiByPSI1MCIvPjxwYXRoIGQ9Ik0zNiA2NWMyLjIgOC44IDEwIDIwIDI4IDIwIDE4IDAgMjUuOC0xMS4yIDI4LTIwIiBzdHJva2U9IiM5OTkiIHN0cm9rZS13aWR0aD0iMyIvPjxjaXJjbGUgZmlsbD0iIzk5OSIgY3g9IjM2IiBjeT0iNDIiIHI9IjQiLz48Y2lyY2xlIGZpbGw9IiM5OTkiIGN4PSI2NCIgY3k9IjQyIiByPSI0Ii8+PC9nPjwvc3ZnPg==';
@@ -143,19 +137,10 @@ function Singers(props) {
           >
             {renderSingerList()}
           </Scroll>
-          <div className="pull-up-loading">
-            {pullUpLoading ? <Loading /> : null}
-          </div>
-          <div className="pull-down-loading">
-            {pullDownLoading ? <LoadingV2 /> : null}
-          </div>
+          {enterLoading ? <Loading></Loading> : null}
         </ListContainer>
       </Data>
-      {enterLoading ? (
-        <EnterLoading>
-          <Loading />
-        </EnterLoading>
-      ) : null}
+      {renderRoutes(props.route.routes)}
     </div>
   );
 }
@@ -203,4 +188,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withRouter(Singers));
+)(withRouter(React.memo(Singers)));
