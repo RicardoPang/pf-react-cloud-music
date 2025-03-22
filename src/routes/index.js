@@ -1,9 +1,10 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import Home from '../application/Home';
 import Recommend from '../application/Recommend';
 import Singers from '../application/Singers';
 import Rank from '../application/Rank';
+import Home from '../application/Home';
+import Album from '../application/Album';
 
 export default [
   {
@@ -16,22 +17,29 @@ export default [
         render: () => <Redirect to={'/recommend'} />,
       },
       {
-        path: '/recommend',
+        path: '/recommend/',
         component: Recommend,
-      },
-      {
-        path: '/singers',
-        component: Singers,
         routes: [
           {
-            path: '/singers/:id',
-            component: Recommend, // 暂时用 Recommend 组件代替 Singer 组件
+            path: '/recommend/:id',
+            component: Album,
           },
         ],
       },
       {
-        path: '/rank',
+        path: '/singers',
+        component: Singers,
+      },
+      {
+        path: '/rank/',
         component: Rank,
+        key: 'rank',
+        routes: [
+          {
+            path: '/rank/:id',
+            component: Album,
+          },
+        ],
       },
     ],
   },

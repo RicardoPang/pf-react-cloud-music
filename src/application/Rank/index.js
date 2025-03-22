@@ -26,13 +26,6 @@ function Rank(props) {
   let officialList = rankList.slice(0, globalStartIndex);
   let globalList = rankList.slice(globalStartIndex);
 
-  const enterDetail = (name) => {
-    const idx = filterIdx(name);
-    if (idx === null) {
-      alert('暂无相关数据');
-      return;
-    }
-  };
   const renderSongList = (list) => {
     return list.length ? (
       <SongList>
@@ -49,6 +42,13 @@ function Rank(props) {
       </SongList>
     ) : null;
   };
+
+  // 跳转到排行榜详情页
+  const enterDetail = (detail) => {
+    props.history.push(`/rank/${detail.id}`);
+  };
+
+  // 这是渲染榜单列表函数，传入 global 遍历来区分不同的布局方式
   const renderRankList = (list, global) => {
     return (
       <List globalRank={global}>
@@ -71,7 +71,9 @@ function Rank(props) {
     );
   };
 
+  // 榜单数据未加载出来之前都给隐藏
   let displayStyle = loading ? { display: 'none' } : { display: '' };
+
   return (
     <Container>
       <Scroll>
