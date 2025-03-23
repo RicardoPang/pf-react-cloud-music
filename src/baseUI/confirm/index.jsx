@@ -3,7 +3,6 @@ import { CSSTransition } from 'react-transition-group';
 import styled, {keyframes} from 'styled-components';
 import style from '../../assets/global-style';
 
-
 const confirmFadeIn = keyframes`
   0%{
     opacity: 0;
