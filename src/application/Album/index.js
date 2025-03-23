@@ -12,6 +12,7 @@ import { getAlbumList, changeEnterLoading } from './store/actionCreators';
 import { connect } from 'react-redux';
 import Loading from '../../baseUI/loading';
 import SongsList from '../SongsList';
+import MusicNote from '../../baseUI/music-note';
 
 // 组件代码
 function Album(props) {
@@ -20,8 +21,13 @@ function Album(props) {
   const [isMarquee, setIsMarquee] = useState(false); // 是否跑步灯
 
   const headerEl = useRef();
+  const musicNoteRef = useRef();
 
-  const { currentAlbum: currentAlbumImmutable, enterLoading } = props;
+  const {
+    currentAlbum: currentAlbumImmutable,
+    enterLoading,
+    songsCount,
+  } = props;
   const { getAlbumDataDispatch } = props;
 
   const id = props.match.params.id;
@@ -58,6 +64,10 @@ function Album(props) {
     },
     [currentAlbum]
   );
+
+  const musicAnimation = (x, y) => {
+    musicNoteRef.current.startAnimation({ x, y });
+  };
 
   const renderTopDesc = () => {
     return (
@@ -120,7 +130,7 @@ function Album(props) {
       unmountOnExit
       onExited={props.history.goBack}
     >
-      <Container>
+      <Container play={songsCount}>
         <Header
           ref={headerEl}
           title={title}
@@ -134,6 +144,7 @@ function Album(props) {
               {renderTopDesc()}
               {renderMenu()}
               <SongsList
+                musicAnimation={musicAnimation}
                 songs={currentAlbum.tracks}
                 collectCount={currentAlbum.subscribedCount}
                 showCollect={true}
@@ -143,6 +154,7 @@ function Album(props) {
           </Scroll>
         ) : null}
         {enterLoading ? <Loading></Loading> : null}
+        <MusicNote ref={musicNoteRef}></MusicNote>
       </Container>
     </CSSTransition>
   );
@@ -152,6 +164,7 @@ function Album(props) {
 const mapStateToProps = (state) => ({
   currentAlbum: state.getIn(['album', 'currentAlbum']),
   enterLoading: state.getIn(['album', 'enterLoading']),
+  songsCount: state.getIn(['player', 'playList']).size,
 });
 // 映射dispatch到组件的props上
 const mapDispatchToProps = (dispatch) => {

@@ -40,8 +40,9 @@ const MusicNote = forwardRef((props, ref) => {
       let node = createNode(`<div class="iconfont">&#xe642;</div>`);
       iconsRef.current.appendChild(node);
     }
-    let domArray = [].slice.call(iconsRef.current.children)
-    domArray.forEach(item => {
+    // 类数组转数组
+    let domArray = [].slice.call(iconsRef.current.children);
+    domArray.forEach((item) => {
       item.running = false;
       item.addEventListener('transitionend', function() {
         this.style['display'] = 'none';
