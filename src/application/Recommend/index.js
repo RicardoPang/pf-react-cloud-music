@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import Slider from '../../components/slider';
 import { connect } from 'react-redux';
-import * as actionTypes from './store/actionCreators';
-import RecommendList from '../../components/list';
-import { Content } from './style';
-import Scroll from '../../baseUI/scroll';
 import { forceCheck } from 'react-lazyload';
+import * as actionTypes from './store/actionCreators';
+import Slider from '../../components/slider';
+import RecommendList from '../../components/list';
+import Scroll from '../../baseUI/scroll';
 import Loading from '../../baseUI/loading';
+import { Content } from './style';
 import { renderRoutes } from 'react-router-config';
 
 function Recommend(props) {
@@ -14,9 +14,12 @@ function Recommend(props) {
   const { getBannerDataDispatch, getRecommendListDataDispatch } = props;
 
   useEffect(() => {
-    getBannerDataDispatch();
-    getRecommendListDataDispatch();
-    // eslint-disable-next-line
+    if (!bannerList.size) {
+      getBannerDataDispatch();
+    }
+    if (!recommendList.size) {
+      getRecommendListDataDispatch();
+    }
   }, []);
 
   const bannerListJS = bannerList ? bannerList.toJS() : [];
@@ -26,11 +29,11 @@ function Recommend(props) {
     <Content play={songsCount}>
       <Scroll className="list" onScroll={forceCheck}>
         <div>
-          <Slider bannerList={bannerListJS}></Slider>
-          <RecommendList recommendList={recommendListJS}></RecommendList>
+          <Slider bannerList={bannerListJS} />
+          <RecommendList recommendList={recommendListJS} />
         </div>
       </Scroll>
-      {enterLoading ? <Loading></Loading> : null}
+      {enterLoading ? <Loading /> : null}
       {/* 将目前所在路由的下一层子路由加以渲染 */}
       {renderRoutes(props.route.routes)}
     </Content>

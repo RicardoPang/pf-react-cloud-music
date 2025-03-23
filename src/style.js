@@ -29,9 +29,6 @@ export const GlobalStyle = createGlobalStyle`
 	body {
 		line-height: 1;
 	}
-	html, body{
-		background: #f2f3f4;;
-	}
 	ol, ul {
 		list-style: none;
 	}
@@ -47,8 +44,11 @@ export const GlobalStyle = createGlobalStyle`
 		border-collapse: collapse;
 		border-spacing: 0;
 	}
-	a{
+	a {
 		text-decoration: none;
 		color: #fff;
+	}
+	.scroll__ScrollContainer {
+		background: transparent !important;
 	}
 `;

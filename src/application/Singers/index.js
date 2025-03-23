@@ -57,7 +57,7 @@ function Singers(props) {
     updateDispatch(category, val);
   };
 
-  let handleUpdateCatetory = (val) => {
+  let handleUpdateCategory = (val) => {
     dispatch({ type: CHANGE_CATEGORY, data: val });
     updateDispatch(val, alpha);
   };
@@ -117,15 +117,15 @@ function Singers(props) {
         <NavContainer>
           <Horizen
             list={categoryTypes}
-            title={'分类'}
-            handleClick={handleUpdateCatetory}
+            title="分类 (默认热门):"
             oldVal={category}
+            handleClick={handleUpdateCategory}
           />
           <Horizen
             list={alphaTypes}
-            title={'首字母'}
-            handleClick={handleUpdateAlpha}
+            title="首字母:"
             oldVal={alpha}
+            handleClick={handleUpdateAlpha}
           />
         </NavContainer>
         <ListContainer play={songsCount}>

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import style from '../../assets/global-style';
 
 export const Content = styled.div`
   position: fixed;
@@ -35,7 +36,7 @@ export const RecommendList = styled.div`
     margin: 15px 0;
     font-size: 18px;
     font-weight: 600;
-    color: ${(props) => props.theme.font};
+    color: ${style['font-color-desc']};
   }
 `;
 
@@ -51,7 +52,7 @@ export const ListItem = styled.div`
   padding-bottom: 100%;
   border-radius: 12px;
   overflow: hidden;
-  background: ${(props) => props.theme.highlight};
+  background: ${style['highlight-background-color']};
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s ease;
 

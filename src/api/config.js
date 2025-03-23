@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // export const baseUrl = 'http://localhost:3300/';
-export const baseUrl = 'https://zhulang-music.vercel.app';
+export const baseUrl = 'https://zhulang-music.vercel.app/';
 
 // axios的实例及拦截器配置
 const axiosInstance = axios.create({

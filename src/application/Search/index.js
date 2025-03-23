@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import SearchBox from './../../baseUI/search-box/index';
+import SearchBox from '../../baseUI/search-box';
 import {
   getHotKeyWords,
   changeEnterLoading,
   getSuggestList,
 } from './store/actionCreators';
 import { connect } from 'react-redux';
-import { getSongDetail } from './../Player/store/actionCreators';
+import { getSongDetail } from '../Player/store/actionCreators';
 import { Container, ShortcutWrapper, HotKey } from './style';
 import Scroll from '../../baseUI/scroll';
-import Loading from './../../baseUI/loading/index';
+import Loading from '../../baseUI/loading';
 import LazyLoad, { forceCheck } from 'react-lazyload';
 import { List, ListItem, SongItem } from './style';
 import { getName } from '../../api/utils';

@@ -3,7 +3,7 @@ export const getCount = (count) => {
   if (count < 10000) {
     return count;
   } else if (Math.floor(count / 10000) < 10000) {
-    return Math.floor(count / 10000) + '万';
+    return Math.floor(count / 1000) / 10 + '万';
   } else {
     return Math.floor(count / 10000000) / 10 + '亿';
   }
@@ -56,7 +56,6 @@ export const formatPlayTime = (interval) => {
 let elementStyle = document.createElement('div').style;
 
 let vendor = (() => {
-  //首先通过transition属性判断是何种浏览器
   let transformNames = {
     webkit: 'webkitTransform',
     Moz: 'MozTransform',
@@ -64,12 +63,11 @@ let vendor = (() => {
     ms: 'msTransform',
     standard: 'Transform',
   };
-  for (let key in transformNames) {
-    if (elementStyle[transformNames[key]] !== undefined) {
-      return key;
-    }
-  }
-  return false;
+  return (
+    Object.keys(transformNames).find(
+      (prefix) => elementStyle[transformNames[prefix]] !== undefined
+    ) || false
+  );
 })();
 
 export function prefixStyle(style) {

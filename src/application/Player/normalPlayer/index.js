@@ -17,6 +17,7 @@ import animations from 'create-keyframe-animation';
 import ProgressBar from '../../../baseUI/progress-bar';
 import { playMode } from './../../../api/config';
 import Scroll from '../../../baseUI/scroll';
+import styled from 'styled-components';
 
 function NormalPlayer(props) {
   const {
@@ -206,7 +207,7 @@ function NormalPlayer(props) {
             in={currentState.current === 'lyric'}
           >
             <LyricContainer>
-              <Scroll ref={lyricScrollRef}>
+              <Scroll ref={lyricScrollRef} className="no-background">
                 <LyricWrapper
                   style={{
                     visibility:

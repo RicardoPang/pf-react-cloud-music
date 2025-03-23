@@ -22,6 +22,7 @@ function Album(props) {
 
   const headerEl = useRef();
   const musicNoteRef = useRef();
+  const nodeRef = useRef(null);
 
   const {
     currentAlbum: currentAlbumImmutable,
@@ -127,9 +128,10 @@ function Album(props) {
       classNames="fly"
       appear={true}
       unmountOnExit
+      nodeRef={nodeRef}
       onExited={props.history.goBack}
     >
-      <Container play={songsCount}>
+      <Container ref={nodeRef} play={songsCount}>
         <Header
           ref={headerEl}
           title={title}

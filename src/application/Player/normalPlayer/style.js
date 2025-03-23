@@ -204,6 +204,15 @@ export const LyricContainer = styled.div`
   right: 0;
   top: 0;
   bottom: 0;
+  overflow: hidden;
+
+  .scroll__ScrollContainer {
+    background: transparent !important;
+  }
+
+  .no-background {
+    background: transparent !important;
+  }
 `;
 export const LyricWrapper = styled.div`
   position: absolute;
