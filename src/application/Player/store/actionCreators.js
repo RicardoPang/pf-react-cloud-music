@@ -1,4 +1,5 @@
 // 放不同action的地方
+import { getSongDetailRequest } from '../../../api/request';
 import {
   SET_CURRENT_SONG,
   SET_FULL_SCREEN,
@@ -9,6 +10,7 @@ import {
   SET_CURRENT_INDEX,
   SET_SHOW_PLAYLIST,
   DELETE_SONG,
+  INSERT_SONG,
 } from './constants';
 import { fromJS } from 'immutable';
 
@@ -56,3 +58,18 @@ export const deleteSong = (data) => ({
   type: DELETE_SONG,
   data: data,
 });
+
+export const insertSong = (data) => ({
+  type: INSERT_SONG,
+  data,
+});
+
+export const getSongDetail = (id) => {
+  return (dispatch) => {
+    getSongDetailRequest(id).then((data) => {
+      let song = data.songs[0];
+      console.log(song);
+      dispatch(insertSong(song));
+    });
+  };
+};

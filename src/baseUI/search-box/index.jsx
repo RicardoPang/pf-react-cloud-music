@@ -39,10 +39,12 @@ const SearchBoxWrapper = styled.div`
 const SearchBox = (props) => {
   const queryRef = useRef();
   const [query, setQuery] = useState('');
-
+  // 从父组件热门搜索中拿到的新关键词
   const { newQuery } = props;
+  // 父组件针对搜索关键字发请求相关的处理
   const { handleQuery } = props;
 
+  // 缓存方法
   let handleQueryDebounce = useMemo(() => {
     return debounce(handleQuery, 500);
   }, [handleQuery]);
@@ -52,6 +54,7 @@ const SearchBox = (props) => {
   }, []);
 
   useEffect(() => {
+    // 注意防抖
     handleQueryDebounce(query);
     // eslint-disable-next-line 
   }, [query]);
@@ -67,16 +70,19 @@ const SearchBox = (props) => {
   }, [newQuery]);
 
   const handleChange = (e) => {
+    //搜索框内容改变时的逻辑
     let val = e.currentTarget.value
     setQuery(val);
   };
 
   const clearQuery = () => {
+    // 清空搜索框内容
     setQuery('');
     queryRef.current.value = '';
     queryRef.current.focus();
   }
   
+  // 根据关键字是否存在决定清空按钮的显示/隐藏
   const displayStyle = query ? {display: 'block'}: {display: 'none'};
 
   return (

@@ -3,6 +3,7 @@ import { renderRoutes } from 'react-router-config';
 import { Top, Tab, TabItem } from './style';
 import { NavLink } from 'react-router-dom'; //利用NavLink组件进行路由跳转
 import Player from '../Player';
+
 function Home(props) {
   const { route } = props;
 
@@ -11,7 +12,12 @@ function Home(props) {
       <Top>
         <span className="iconfont menu">&#xe65c;</span>
         <span className="title">Web App</span>
-        <span className="iconfont search">&#xe62b;</span>
+        <span
+          className="iconfont search"
+          onClick={() => props.history.push('/search')}
+        >
+          &#xe62b;
+        </span>
       </Top>
       <Tab>
         <NavLink to="/recommend" activeClassName="selected">

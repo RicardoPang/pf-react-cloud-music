@@ -211,6 +211,11 @@ function Player(props) {
       handleNext();
     }
   };
+
+  const handleError = (e) => {
+    console.error('音频播放错误:', e);
+  };
+
   return (
     <div>
       {isEmptyObject(currentSong) ? null : (
@@ -247,8 +252,10 @@ function Player(props) {
       )}
       <audio
         ref={audioRef}
+        autoPlay={true}
         onTimeUpdate={updateTime}
         onEnded={handleEnd}
+        onError={handleError}
       ></audio>
       <PlayList></PlayList>
       <Toast text={modeText} ref={toastRef}></Toast>

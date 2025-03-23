@@ -24,14 +24,10 @@ export const changeEnterLoading = (data) => ({
 
 export const getSingerInfo = (id) => {
   return (dispatch) => {
-    getSingerInfoRequest(id)
-      .then((data) => {
-        dispatch(changeArtist(data.artist));
-        dispatch(changeSongs(data.hotSongs));
-        dispatch(changeEnterLoading(false));
-      })
-      .catch(() => {
-        console.log('获取歌手信息失败');
-      });
+    getSingerInfoRequest(id).then((data) => {
+      dispatch(changeArtist(data.artist));
+      dispatch(changeSongs(data.hotSongs));
+      dispatch(changeEnterLoading(false));
+    });
   };
 };

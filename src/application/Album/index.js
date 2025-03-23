@@ -1,12 +1,12 @@
 //src/application/Album/index.js
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Container, ScrollContainer } from './style';
+import { Container } from './style';
 import { CSSTransition } from 'react-transition-group';
 import Header from '../../baseUI/header/index';
 import Scroll from '../../baseUI/scroll/index';
-import { TopDesc, Menu, SongList, SongItem } from './style';
+import { TopDesc, Menu } from './style';
 import style from '../../assets/global-style';
-import { getName, getCount, isEmptyObject } from './../../api/utils';
+import { getCount, isEmptyObject } from './../../api/utils';
 import { HEADER_HEIGHT } from '../../api/config';
 import { getAlbumList, changeEnterLoading } from './store/actionCreators';
 import { connect } from 'react-redux';
@@ -40,8 +40,7 @@ function Album(props) {
   let currentAlbum = currentAlbumImmutable.toJS();
 
   const handleBack = useCallback(() => {
-    props.history.goBack();
-    // eslint-disable-next-line
+    setShowStatus(false);
   }, []);
 
   const handleScroll = useCallback(
