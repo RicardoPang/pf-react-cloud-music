@@ -5,8 +5,8 @@ import { CSSTransition } from 'react-transition-group';
 import ProgressCircle from '../../../baseUI/progress-circle';
 
 function MiniPlayer(props) {
-  const { song, fullScreen, playing, percent } = props;
-  const { clickPlaying, toggleFullScreen, togglePlayList } = props;
+  const { song, full, playing, percent } = props;
+  const { clickPlaying, toggleFullScreenDispatch, togglePlayList } = props;
 
   const miniPlayerRef = useRef();
 
@@ -15,9 +15,15 @@ function MiniPlayer(props) {
     e.stopPropagation();
   };
 
+  const handleToggleFullScreen = () => {
+    if (toggleFullScreenDispatch) {
+      toggleFullScreenDispatch(true);
+    }
+  };
+
   return (
     <CSSTransition
-      in={!fullScreen}
+      in={!full}
       timeout={400}
       classNames="mini"
       onEnter={() => {
@@ -27,10 +33,7 @@ function MiniPlayer(props) {
         miniPlayerRef.current.style.display = 'none';
       }}
     >
-      <MiniPlayerContainer
-        ref={miniPlayerRef}
-        onClick={() => toggleFullScreen(true)}
-      >
+      <MiniPlayerContainer ref={miniPlayerRef} onClick={handleToggleFullScreen}>
         <div className="icon">
           <div className="imgWrapper">
             {/* 暂停的时候唱片也停止旋转 */}
@@ -73,5 +76,15 @@ function MiniPlayer(props) {
     </CSSTransition>
   );
 }
+
+MiniPlayer.defaultProps = {
+  song: {},
+  full: false,
+  playing: false,
+  percent: 0,
+  clickPlaying: null,
+  toggleFullScreenDispatch: null,
+  togglePlayList: null,
+};
 
 export default React.memo(MiniPlayer);

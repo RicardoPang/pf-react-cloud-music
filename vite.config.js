@@ -42,6 +42,10 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+    fs: {
+      strict: false,
+      allow: ['..'],
+    },
   },
   resolve: {
     alias: {

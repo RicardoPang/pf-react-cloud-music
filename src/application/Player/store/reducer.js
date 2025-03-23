@@ -84,6 +84,7 @@ const defaultState = fromJS({
   currentIndex: -1, // 当前歌曲在播放列表中的索引
   showPlayList: false, // 是否显示播放列表
   currentSong: {},
+  speed: 1,
 });
 
 export default (state = defaultState, action) => {
@@ -108,6 +109,8 @@ export default (state = defaultState, action) => {
       return handleDeleteSong(state, action.data);
     case actionTypes.INSERT_SONG:
       return handleInsertSong(state, action.data);
+    case actionTypes.CHANGE_SPEED:
+      return state.set('speed', action.data);
     default:
       return state;
   }

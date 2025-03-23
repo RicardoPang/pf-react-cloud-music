@@ -11,6 +11,7 @@ import {
   SET_SHOW_PLAYLIST,
   DELETE_SONG,
   INSERT_SONG,
+  CHANGE_SPEED,
 } from './constants';
 import { fromJS } from 'immutable';
 
@@ -41,6 +42,11 @@ export const changePlayList = (data) => ({
 
 export const changePlayMode = (data) => ({
   type: SET_PLAY_MODE,
+  data,
+});
+
+export const changeSpeed = (data) => ({
+  type: CHANGE_SPEED,
   data,
 });
 

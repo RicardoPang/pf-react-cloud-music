@@ -7,13 +7,15 @@ export default class Lyric {
   /**
    * @params {string} lrc
    * @params {function} handler
+   * @params {number} speed
    */
-  constructor(lrc, hanlder = () => {}) {
+  constructor(lrc, handler = () => {}, speed = 1) {
     this.lrc = lrc;
     this.lines = []; //这是解析后的数组，每一项包含对应的歌词和时间
-    this.handler = hanlder; //回调函数
+    this.handler = handler; //回调函数
     this.state = STATE_PAUSE; //播放状态
     this.curLineIndex = 0; //当前播放歌词所在的行数
+    this.speed = speed;
     this.startStamp = 0; //歌曲开始的时间戳
 
     this._initLines();
@@ -76,7 +78,17 @@ export default class Lyric {
     clearTimeout(this.timer);
   }
   seek(offset) {
-    this.play(offset, true);
+    if (!this.lines.length) {
+      return;
+    }
+    this.stop();
+    this.curLineIndex = this._findcurLineIndex(offset);
+    //现在处于什么位置
+    this._callHandler(this.curLineIndex - 1);
+    this.state = STATE_PLAYING;
+
+    // 继续播放
+    this._playRest(offset / this.speed);
   }
 
   _findcurLineIndex(time) {
@@ -119,5 +131,9 @@ export default class Lyric {
         this._playRest();
       }
     }, delay);
+  }
+
+  changeSpeed(speed) {
+    this.speed = speed;
   }
 }

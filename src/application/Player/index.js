@@ -8,42 +8,33 @@ import {
   changePlayList,
   changePlayMode,
   changeFullScreen,
+  changeSpeed,
 } from './store/actionCreators';
-import MiniPlayer from './miniPlayer';
-import NormalPlayer from './normalPlayer';
-import { getSongUrl, isEmptyObject, shuffle, findIndex } from '../../api/utils';
-import { playMode } from '../../api/config';
-import Toast from './../../baseUI/toast/index';
+import { isEmptyObject, shuffle, findIndex, getSongUrl } from '../../api/utils';
 import PlayList from './play-list';
+import Toast from '../../baseUI/toast';
+import Lyric from '../../api/lyric-parser';
+import MiniPlayer from './miniPlayer/index';
+import NormalPlayer from './normalPlayer/index';
+import { playMode } from '../../api/config';
 import { getLyricRequest } from '../../api/request';
-import Lyric from './../../api/lyric-parser';
 
 function Player(props) {
-  //目前播放时间
   const [currentTime, setCurrentTime] = useState(0);
-  //歌曲总时长
   const [duration, setDuration] = useState(0);
-  //歌曲播放进度
-  let percent = isNaN(currentTime / duration) ? 0 : currentTime / duration;
-  const [currentPlayingLyric, setPlayingLyric] = useState(''); // 即时歌词
-
-  const [preSong, setPreSong] = useState({});
+  const [currentPlayingLyric, setPlayingLyric] = useState('');
   const [modeText, setModeText] = useState('');
-  const [songReady, setSongReady] = useState(true);
 
-  // 绑定ref
-  const audioRef = useRef();
-  const toastRef = useRef();
-  const currentLyric = useRef();
-  const currentLineNum = useRef(0);
+  let percent = isNaN(currentTime / duration) ? 0 : currentTime / duration;
 
   const {
+    speed,
     playing,
     currentSong: immutableCurrentSong,
     currentIndex,
     playList: immutablePlayList,
-    mode, //播放模式
-    sequencePlayList: immutableSequencePlayList, //顺序列表
+    mode,
+    sequencePlayList: immutableSequencePlayList,
     fullScreen,
   } = props;
 
@@ -52,14 +43,24 @@ function Player(props) {
     togglePlayListDispatch,
     changeCurrentIndexDispatch,
     changeCurrentDispatch,
-    changePlayListDispatch, //改变playList
-    changeModeDispatch, //改变mode
+    changePlayListDispatch,
+    changeModeDispatch,
     toggleFullScreenDispatch,
+    changeSpeedDispatch,
   } = props;
 
   const playList = immutablePlayList.toJS();
   const sequencePlayList = immutableSequencePlayList.toJS();
   const currentSong = immutableCurrentSong.toJS();
+
+  const [preSong, setPreSong] = useState({});
+
+  const audioRef = useRef();
+  const toastRef = useRef();
+
+  const currentLyric = useRef();
+  const currentLineNum = useRef(0);
+  const songReady = useRef(true);
 
   useEffect(() => {
     if (
@@ -67,33 +68,37 @@ function Player(props) {
       currentIndex === -1 ||
       !playList[currentIndex] ||
       playList[currentIndex].id === preSong.id ||
-      !songReady
+      !songReady.current
     )
       return;
+    songReady.current = false;
     let current = playList[currentIndex];
+    changeCurrentDispatch(current);
     setPreSong(current);
-    setSongReady(false); // 把标志位置为false，表示现在新的资源没有缓冲完成，不能切歌
-    changeCurrentDispatch(current); //赋值currentSong
+    setPlayingLyric('');
     audioRef.current.src = getSongUrl(current.id);
-    setTimeout(() => {
-      // 注意 play方法返回的是一个promise对象
-      audioRef.current.play().then(() => {
-        setSongReady(true);
-      });
-    });
-    togglePlayingDispatch(true); //播放状态
-    setCurrentTime(0); //从头开始播放
-    setDuration((current.dt / 1000) | 0); //时长
-
+    audioRef.current.autoplay = true;
+    audioRef.current.playbackRate = speed;
+    togglePlayingDispatch(true);
     getLyric(current.id);
-    setCurrentTime(0); // 从头开始播放
-    setDuration((current.dt / 1000) | 0); // 设置歌曲时长
+    setCurrentTime(0);
+    setDuration((current.dt / 1000) | 0);
     // eslint-disable-next-line
-  }, [playList, currentIndex]);
+  }, [currentIndex, playList]);
 
   useEffect(() => {
     playing ? audioRef.current.play() : audioRef.current.pause();
   }, [playing]);
+
+  useEffect(() => {
+    if (!fullScreen) return;
+    if (currentLyric.current && currentLyric.current.lines.length) {
+      handleLyric({
+        lineNum: currentLineNum.current,
+        txt: currentLyric.current.lines[currentLineNum.current].txt,
+      });
+    }
+  }, [fullScreen]);
 
   const handleLyric = ({ lineNum, txt }) => {
     if (!currentLyric.current) return;
@@ -107,20 +112,23 @@ function Player(props) {
       currentLyric.current.stop();
     }
     // 避免songReady恒为false的情况
+    setTimeout(() => {
+      songReady.current = true;
+    }, 3000);
     getLyricRequest(id)
       .then((data) => {
-        console.log(data);
-        lyric = data.lrc.lyric;
+        lyric = data.lrc && data.lrc.lyric;
         if (!lyric) {
           currentLyric.current = null;
           return;
         }
-        currentLyric.current = new Lyric(lyric, handleLyric);
+        currentLyric.current = new Lyric(lyric, handleLyric, speed);
         currentLyric.current.play();
         currentLineNum.current = 0;
         currentLyric.current.seek(0);
       })
       .catch(() => {
+        currentLyric.current = '';
         songReady.current = true;
         audioRef.current.play();
       });
@@ -134,10 +142,6 @@ function Player(props) {
     }
   };
 
-  const updateTime = (e) => {
-    setCurrentTime(e.target.currentTime);
-  };
-
   const onProgressChange = (curPercent) => {
     const newTime = curPercent * duration;
     setCurrentTime(newTime);
@@ -149,23 +153,48 @@ function Player(props) {
       currentLyric.current.seek(newTime * 1000);
     }
   };
-  //一首歌循环
+
+  const updateTime = (e) => {
+    setCurrentTime(e.target.currentTime);
+  };
+
   const handleLoop = () => {
     audioRef.current.currentTime = 0;
-    changePlayingState(true);
+    togglePlayingDispatch(true);
     audioRef.current.play();
+    if (currentLyric.current) {
+      currentLyric.current.seek(0);
+    }
   };
 
   const handlePrev = () => {
-    //播放列表只有一首歌时单曲循环
     if (playList.length === 1) {
       handleLoop();
       return;
     }
     let index = currentIndex - 1;
-    if (index < 0) index = playList.length - 1;
+    if (index === 0) index = playList.length - 1;
     if (!playing) togglePlayingDispatch(true);
     changeCurrentIndexDispatch(index);
+  };
+
+  const handleNext = () => {
+    if (playList.length === 1) {
+      handleLoop();
+      return;
+    }
+    let index = currentIndex + 1;
+    if (index === playList.length) index = 0;
+    if (!playing) togglePlayingDispatch(true);
+    changeCurrentIndexDispatch(index);
+  };
+
+  const handleEnd = () => {
+    if (mode === playMode.loop) {
+      handleLoop();
+    } else {
+      handleNext();
+    }
   };
 
   const changeMode = () => {
@@ -191,73 +220,71 @@ function Player(props) {
     changeModeDispatch(newMode);
     toastRef.current.show();
   };
-
-  const handleNext = () => {
-    //播放列表只有一首歌时单曲循环
-    if (playList.length === 1) {
-      handleLoop();
-      return;
-    }
-    let index = currentIndex + 1;
-    if (index === playList.length) index = 0;
-    if (!playing) togglePlayingDispatch(true);
-    changeCurrentIndexDispatch(index);
+  const handleError = () => {
+    songReady.current = true;
+    handleNext();
+    alert('播放出错');
   };
 
-  const handleEnd = () => {
-    if (mode === playMode.loop) {
-      handleLoop();
-    } else {
-      handleNext();
-    }
-  };
+  const clickSpeed = (newSpeed) => {
+    changeSpeedDispatch(newSpeed);
+    audioRef.current.playbackRate = newSpeed;
 
-  const handleError = (e) => {
-    console.error('音频播放错误:', e);
+    // 添加检查，确保 currentLyric 存在且有 changeSpeed 方法
+    if (
+      currentLyric.current &&
+      typeof currentLyric.current.changeSpeed === 'function'
+    ) {
+      currentLyric.current.changeSpeed(newSpeed);
+      currentLyric.current.seek(currentTime * 1000);
+    }
   };
 
   return (
     <div>
       {isEmptyObject(currentSong) ? null : (
-        <MiniPlayer
-          song={currentSong}
-          fullScreen={fullScreen}
-          playing={playing}
-          toggleFullScreen={toggleFullScreenDispatch}
-          clickPlaying={clickPlaying}
-          percent={percent}
-          togglePlayList={togglePlayListDispatch}
-        />
-      )}
-      {isEmptyObject(currentSong) ? null : (
         <NormalPlayer
           song={currentSong}
-          fullScreen={fullScreen}
+          full={fullScreen}
           playing={playing}
           mode={mode}
-          changeMode={changeMode}
+          percent={percent}
+          modeText={modeText}
           duration={duration}
           currentTime={currentTime}
-          percent={percent}
           currentLyric={currentLyric.current}
           currentPlayingLyric={currentPlayingLyric}
-          currentLineNum={currentLineNum.current}
-          toggleFullScreen={toggleFullScreenDispatch}
-          clickPlaying={clickPlaying}
-          onProgressChange={onProgressChange}
+          speed={speed}
+          changeMode={changeMode}
           handlePrev={handlePrev}
           handleNext={handleNext}
-          togglePlayList={togglePlayListDispatch}
-        />
+          onProgressChange={onProgressChange}
+          currentLineNum={currentLineNum.current}
+          clickPlaying={clickPlaying}
+          toggleFullScreenDispatch={toggleFullScreenDispatch}
+          togglePlayListDispatch={togglePlayListDispatch}
+          clickSpeed={clickSpeed}
+        ></NormalPlayer>
       )}
+      {isEmptyObject(currentSong) ? null : (
+        <MiniPlayer
+          playing={playing}
+          full={fullScreen}
+          song={currentSong}
+          percent={percent}
+          clickPlaying={clickPlaying}
+          toggleFullScreenDispatch={toggleFullScreenDispatch}
+          togglePlayList={togglePlayListDispatch}
+        ></MiniPlayer>
+      )}
+
+      <PlayList clearPreSong={setPreSong.bind(null, {})}></PlayList>
       <audio
         ref={audioRef}
-        autoPlay={true}
         onTimeUpdate={updateTime}
         onEnded={handleEnd}
         onError={handleError}
       ></audio>
-      <PlayList></PlayList>
       <Toast text={modeText} ref={toastRef}></Toast>
     </div>
   );
@@ -270,6 +297,7 @@ const mapStateToProps = (state) => ({
   currentSong: state.getIn(['player', 'currentSong']),
   showPlayList: state.getIn(['player', 'showPlayList']),
   mode: state.getIn(['player', 'mode']),
+  speed: state.getIn(['player', 'speed']),
   currentIndex: state.getIn(['player', 'currentIndex']),
   playList: state.getIn(['player', 'playList']),
   sequencePlayList: state.getIn(['player', 'sequencePlayList']),
@@ -298,6 +326,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     changePlayListDispatch(data) {
       dispatch(changePlayList(data));
+    },
+    changeSpeedDispatch(data) {
+      dispatch(changeSpeed(data));
     },
   };
 };
