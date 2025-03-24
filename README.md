@@ -1,68 +1,68 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 📝 主要功能实现
 
-## Available Scripts
+### 播放器功能
 
-In the project directory, you can run:
+- 使用 HTML5 的 Audio 实现音频播放
+- 使用 Redux 管理播放状态
+- 使用 better-scroll 实现歌词滚动
+- 使用 createKeyframeAnimation 实现播放器动画
+- 支持多种播放模式切换
+- 支持倍速播放功能
 
-### `npm start`
+### 数据管理
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- 使用 Redux 管理全局状态
+- 使用 Immutable.js 确保数据不可变性
+- 使用 Redux-thunk 处理异步操作
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+### 性能优化
 
-### `npm test`
+- 路由懒加载
+- 图片懒加载
+- 函数组件 + Hooks
+- React.memo 优化渲染
+- 防抖和节流处理
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🤝 贡献指南
 
-### `npm run build`
+1. Fork 本仓库
+2. 创建你的特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交你的改动 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开一个 Pull Request
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 📚 打开方式:
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+1. 将项目 clone 下来
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   ```shell
+   $ git clone https://github.com/RicardoPang/pf-react-cloud-music.git
+   $ cd cloud-music
+   $ npm install
 
-### `npm run eject`
+   // 下载子模块
+   $ git clone https://github.com/RicardoPang/NeteaseCloudMusicApi.git
+   $ cd NeteaseCloudMusicApi
+   $ npm install
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+   接下来，要记得把`src/api/config.js`中把`baseUrl`改成接口的地址。（一定要记得,不然报 404!）
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. 运行
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+   ```shell
+   $ npm run start
+   ```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+   现在就在本地的 3000 端口访问了。如果要打包到线上，执行`npm run build`即可。
 
-## Learn More
+## 📄 许可证
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+本项目基于 MIT 许可证开源，详见 [LICENSE](./LICENSE) 文件。
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🙏 致谢
 
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+- [网易云音乐 API](https://github.com/RicardoPang/NeteaseCloudMusicApi)
+- [Create React App](https://github.com/facebook/create-react-app)
+- [React](https://reactjs.org/)
+- [Redux](https://redux.js.org/)
