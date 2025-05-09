@@ -7,6 +7,7 @@ import { renderRoutes } from 'react-router-config';
 import store from './store/index';
 import routes from './routes/index';
 import { Data } from './application/Singers/data';
+import AIAssistant from './components/AIAssistant';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <GlobalStyle />
         <IconStyle />
         <Data>{renderRoutes(routes)}</Data>
+        <AIAssistant />
       </HashRouter>
     </Provider>
   );

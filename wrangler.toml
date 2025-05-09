@@ -1,0 +1,19 @@
+
+# Cloudflare Pages配置
+name = "pf-react-cloud-music"
+type = "webpack"
+account_id = "ac3283c45717d166d8c828bb3d93077c"
+workers_dev = true
+route = ""
+zone_id = ""
+
+[site]
+bucket = "./dist"
+entry-point = "workers-site"
+
+[build]
+command = "npm run build"
+upload.format = "service-worker"
+
+[build.upload]
+format = "service-worker"

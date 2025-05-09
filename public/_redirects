@@ -1,0 +1,6 @@
+
+# 处理SPA路由
+/* /index.html 200
+
+# API代理
+/api/* https://zhulang-music.vercel.app/api/:splat 200

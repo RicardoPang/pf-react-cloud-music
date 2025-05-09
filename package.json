@@ -26,7 +26,8 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "wrangler pages publish dist"
   },
   "eslintConfig": {
     "extends": "react-app"
