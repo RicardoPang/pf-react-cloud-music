@@ -4,6 +4,46 @@ import { debounce } from '../../api/utils';
 import { CSSTransition } from 'react-transition-group';
 import style from '../../assets/global-style';
 
+// GraphQL查询和变更定义
+const TEST_QUERY = `
+  query {
+    test {
+      success
+      message
+      timestamp
+      data {
+        name
+        version
+        features
+        model
+      }
+    }
+  }
+`;
+
+const CHAT_MUTATION = `
+  mutation ChatWithAI($prompt: String!) {
+    chat(prompt: $prompt) {
+      success
+      message
+      data {
+        choices {
+          message {
+            content
+          }
+        }
+        model
+        usage {
+          prompt_tokens
+          completion_tokens
+          total_tokens
+        }
+      }
+      error
+    }
+  }
+`;
+
 // 样式定义
 const Container = styled.div`
   position: fixed;
@@ -182,14 +222,33 @@ const AIAssistant = () => {
 
   // 组件加载时获取测试响应
   useEffect(() => {
-    // 从Cloudflare Worker获取测试响应
+    // 使用GraphQL从Cloudflare Worker获取测试响应
     const fetchTestResponse = async () => {
       try {
-        // 替换为你的Cloudflare Worker URL
+        // 替换为你的Cloudflare Worker GraphQL端点
         const workerUrl =
-          'https://cloud-music-ai-assistant.ricardo-pangj.workers.dev/';
-        const response = await fetch(workerUrl);
-        const data = await response.json();
+          'https://cloud-music-ai-assistant.ricardo-pangj.workers.dev/graphql';
+        
+        // 发送GraphQL查询
+        const response = await fetch(workerUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: TEST_QUERY
+          }),
+        });
+        
+        const result = await response.json();
+        
+        // 检查GraphQL响应是否有错误
+        if (result.errors) {
+          throw new Error(result.errors[0].message);
+        }
+        
+        // 从GraphQL响应中提取数据
+        const data = result.data.test;
         setTestResponse(data);
 
         // 添加欢迎消息
@@ -198,11 +257,14 @@ const AIAssistant = () => {
             type: 'ai',
             content: `${data.message} 我是${
               data.data.name
-            }，可以为你提供${data.data.features.join('、')}等服务。`,
+            }，可以帮你解答关于音乐的问题。我支持的功能包括：${data.data.features.join(
+              '、'
+            )}。`,
           },
         ]);
       } catch (error) {
         console.error('获取测试响应失败:', error);
+        // 添加默认欢迎消息
         setMessages([
           {
             type: 'ai',
@@ -218,7 +280,7 @@ const AIAssistant = () => {
     }
   }, [showChat, messages.length]);
 
-  // 发送消息到ChatGPT API
+  // 使用GraphQL发送消息到AI助手
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
 
@@ -229,20 +291,33 @@ const AIAssistant = () => {
     setLoading(true);
 
     try {
-      // 替换为你的Cloudflare Worker URL
+      // 替换为你的Cloudflare Worker GraphQL端点
       const workerUrl =
-        'https://cloud-music-ai-assistant.ricardo-pangj.workers.dev/api/chat';
+        'https://cloud-music-ai-assistant.ricardo-pangj.workers.dev/graphql';
+      
+      // 发送GraphQL变更操作
       const response = await fetch(workerUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt: input }),
+        body: JSON.stringify({
+          query: CHAT_MUTATION,
+          variables: { prompt: input }
+        }),
       });
 
-      const data = await response.json();
+      const result = await response.json();
+      
+      // 检查GraphQL响应是否有错误
+      if (result.errors) {
+        throw new Error(result.errors[0].message);
+      }
+      
+      // 从GraphQL响应中提取数据
+      const data = result.data.chat;
 
-      if (data.success && data.data.choices && data.data.choices.length > 0) {
+      if (data.success && data.data?.choices && data.data.choices.length > 0) {
         // 添加AI响应
         const aiMessage = {
           type: 'ai',
@@ -253,7 +328,7 @@ const AIAssistant = () => {
         // 处理错误响应
         const errorMessage = {
           type: 'ai',
-          content: '抱歉，我无法处理你的请求。请稍后再试。',
+          content: data.error || '抱歉，我无法处理你的请求。请稍后再试。',
         };
         setMessages((prev) => [...prev, errorMessage]);
       }
@@ -270,7 +345,7 @@ const AIAssistant = () => {
     }
   };
 
-  // 使用防抖处理输入
+  // 使用防抖处理输入 - 在GraphQL实现中不再需要，但保留以备将来使用
   const debouncedSetInput = debounce((value) => {
     setInput(value);
   }, 300);
