@@ -44,7 +44,7 @@ function handleOptions() {
  * 这些常量用于配置与DeepSeek AI服务的连接参数
  */
 const DEEPSEEK_API_URL = 'https://api.siliconflow.cn/v1/chat/completions';
-const DEEPSEEK_API_KEY = 'sk-fuclvgmvvtgvnfqwxaguhdwrgyqfnlpwbxeyamlztgruenyd';
+const DEEPSEEK_API_KEY = 'sk-fuclvgmvvtgvnfqwxaguhdwrgyqfnlpwbxeyamlzxxxxxxxx'; // 换成自己的硅基流动个人账号的key
 const DEEPSEEK_MODEL = 'Pro/deepseek-ai/DeepSeek-R1';
 
 /**
